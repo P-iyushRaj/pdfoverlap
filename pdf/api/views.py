@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from .models import Pdf
-from .serializer import PdfSerializer, PdfmodifiedSerializer
+from .serializer import PdfSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 
@@ -45,8 +45,6 @@ class Pdf_api(APIView):
             pdfmodified_path = "./media/result/" + str(request.data['pdf_file'])
             outputStream = open(pdfmodified_path, "wb")
             output.write(outputStream)            
-
-            #serializer2 = PdfmodifiedSerializer(data = outputStream)
             outputStream.close()
 
             return Response({'msg':'data created', "data":pdfmodified_path}, status=status.HTTP_201_CREATED)
