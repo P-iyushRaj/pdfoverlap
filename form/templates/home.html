@@ -75,22 +75,33 @@
   </form>
 
 <div style = "width:350px;height:auto; padding:10px 10px 10px 10px; background-color:black; color:green; ">
-<form method="post" action="http://127.0.0.1:8000/sign/" class="sigPad">
-{% csrf_token %}
-  <div class="sig sigWrapper">
-    <canvas class="pad" width="275" height="200"></canvas>
-    <input type="hidden" name="output" class="output">
-  </div>
-  <div id = "submit">
-    <button type="submit" name="submit">Submit Signature</button>
-  </div>
-  <div id = "clear">
-    <button type="clear" name="clear" class= "clearButton">Clear Signature</button>
-  </div>
-  <div style="clear:both;"></div>
+<form method="post" action="http://127.0.0.1:8000/sign/" class="sigPad" id='formpadid'>
+  {% csrf_token %}
+  <p class="drawItDesc">Click and drag to draw your signature in the box below.</p>
+    <div class="sig sigWrapper">
+      <canvas class="pad" width="275" height="200"></canvas>
+      <input type="hidden" name="output" class="output">
+    </div>
+    <div id = "submit">
+      <button type="submit" name="submit">Submit Signature</button>
+    </div>
+    <div id = "clear">
+      <button type="clear" name="clear" class= "clearButton">Clear Signature</button>
+    </div>
+    <div style="clear:both;"></div>
   
   </form>
+{% comment %}   
 </div>
+	<h1 style="text-align:center;">Regenerate a User's Saved Signature</h1>
+	<div style="width:350px;height:auto;margin:50px auto;padding: 20px 0;background-color:#fff;border:1px dotted #999;">
+		<div class="signed">
+			<div class="sigWrapper">
+				<canvas class="pad" width="275" height="90"></canvas>
+			</div>
+		</div>
+		<center><button name="get" type="button" id="get">Get Signature</button></center>
+	</div> {% endcomment %}
 
 </body> 
 
@@ -210,7 +221,7 @@ $(document).ready(function (e) {
 <script type="text/javascript" src="{% static 'js/json2.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.signaturepad.min.js' %}"></script>
 <script>
-$(document).ready(function(){
+$(document).ready(function(e){
     var options ={
         defaultAction : 'drawIt',
         drawOnly : true,
@@ -219,8 +230,75 @@ $(document).ready(function(){
         penColour : '#000000',
     }
     $('.sigPad').signaturePad(options);
-
+    
+/*
+    $(document).ready(function () {
+  $('.sigPad').signaturePad({displayOnly:true}).regenerate(sig);
 });
+*/
+/*
+    $('#formpadid').on('submit',(function(e) {
+        e.preventDefault();
+        // alert(api.validateForm());
+        if (api.validateForm()) {
+            var pid = <%=Session["PatientID"].ToString()%>;
+            var image = document.getElementById("myCanvas").toDataURL("image/png");
+            image = image.replace('data:image/png;base64,', '');
+            $.ajax({
+                type: 'POST',
+                async: false,
+                url: $(this).attr('action'),,
+                data: '{ "imageData" : "' + image + '", "pid" : "' + pid + '" }',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("success");
+                    console.log(data);
+                    alert("signature shared")
+                    },
+                error: function(data){
+                    console.log("error");
+                    console.log(data);
+                    alert("sign again plz")
+                }
+            });
+
+        }
+        return false;
+    });
+    */
+      });
+</script>
+<script>
+$('#formpadid').on('submit',(function(e) {
+        e.preventDefault();
+        // alert(api.validateForm());
+        if (api.validateForm()) {
+            var pid = <%=Session["PatientID"].ToString()%>;
+            var image = document.getElementById("myCanvas").toDataURL("image/png");
+            image = image.replace('data:image/png;base64,', '');
+            $.ajax({
+                type: 'POST',
+                async: false,
+                url: $(this).attr('action'),,
+                data: '{ "imageData" : "' + image + '", "pid" : "' + pid + '" }',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (msg) {
+                    console.log("success");
+                    console.log(data);
+                    alert("signature shared")
+                    },
+                error: function(data){
+                    console.log("error");
+                    console.log(data);
+                    alert("sign again plz")
+                }
+            });
+
+        }
+        return false;
+    });
 </script>
 
 </html>  
