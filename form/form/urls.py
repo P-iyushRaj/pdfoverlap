@@ -16,5 +16,7 @@ urlpatterns = [
     path('voip/', views.Voip_api.as_view()),
 
     path('sign/', views.Sign_api.as_view()),
+
+    path('app/', include('app.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Pdf
+from .models import Pdf, Note, Phone, Sign
 
 class PdfSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,15 +9,15 @@ class PdfSerializer(serializers.ModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Pdf
+        model = Note
         fields = ['id','note']
 
 class VoipSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Pdf
+        model = Phone
         fields = ['id','number']
 
 class SignatureSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Pdf
+        model = Sign
         fields = ['id','signature']

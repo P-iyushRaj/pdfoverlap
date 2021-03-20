@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from .models import Pdf
+from .models import Pdf, Note, Phone, Sign
 from .serializers import PdfSerializer, VoipSerializer, NoteSerializer, SignatureSerializer
 from rest_framework import status
 from rest_framework.views import APIView
@@ -44,17 +44,18 @@ class Pdf_api(APIView):
             outputStream.close()
 
             return Response({'msg':'data created', "data":pdfmodified_path}, status=status.HTTP_201_CREATED)
+            #return render(request, 'form.html', {'form' : serializer})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 from rest_framework.generics import ListAPIView,CreateAPIView
 
 class NoteList(ListAPIView):
-    queryset = Pdf.objects.values('note')
+    queryset = Note.objects.values('note')
     serializer_class = NoteSerializer
 
 class NoteCreate(CreateAPIView):
-    queryset = Pdf.objects.values('note')
+    queryset = Note.objects.values('note')
     serializer_class = NoteSerializer
 
 
@@ -69,7 +70,7 @@ class Voip_api(APIView):
             #account_sid = os.environ['TWILIO_ACCOUNT_SID']
             #auth_token = os.environ['TWILIO_AUTH_TOKEN']
             account_sid = 'ACef24f2e76cd6000bf9aebaeb6e7a2256'
-            auth_token = '52bd2a991fc49be2c23064a91e52a00f'
+            auth_token = 'a0506cddf553fa104f9829200d804362'
             client = Client(account_sid, auth_token)
 
             call = client.calls.create(
@@ -85,7 +86,24 @@ class Voip_api(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class Sign_api(CreateAPIView):
-    queryset = Pdf.objects.values('signature')
+    queryset = Sign.objects.values('signature')
     serializer_class = SignatureSerializer
+
+
+from django.http import HttpResponse
+from django.shortcuts import render
+import requests
+from django.views.decorators.csrf import csrf_protect
+
+@csrf_protect
+def home(request):
+
+    noteshistory = requests.get('http://127.0.0.1:8000/noteget/')
+    notesdata = noteshistory.json()
+
+    #breakpoint()
+    return render(request, 'home.html', context={'note':notesdata,})
+
+
+

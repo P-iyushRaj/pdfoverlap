@@ -1,0 +1,226 @@
+{% load static %}
+
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">  
+    <link rel="stylesheet"  href="{%  static  'css/style.css'  %}" type="text/css" />
+    <title>Homepage</title>  
+</head>  
+
+<body>  
+    <h1>General Patient Information</h1>
+    <hr>
+    <div id="result"></div>
+
+  <form action = 'http://127.0.0.1:8000/pdffile/' id="formpdfid" title = "" method = 'POST' >
+    <div class="container">
+      <table>
+      <tr>
+        <th>Pdf form</th>
+        <th>Form field</th>
+        <th>X</th>
+        <th>Y</th>
+      </tr>
+      
+      <tr>
+        <td><input id="pdf_file" name="pdf_file" type="file" accept="application/pdf" ></td>
+        <td><input type="text" id="text" name="text" ></td>
+        <td><input type="number" id="x" name="x" ></td>
+        <td><input type="number" id="y" name="y" ></td>
+      </tr>
+      </table>
+    </div> 
+    <div><input type="submit" id="submitButtonpdf" name="submitButton" value="Submit"></div>
+  </form><br><hr>
+
+  <form action="http://127.0.0.1:8000/noteget/" id="formnotegetid" title = "" method = 'GET' >
+  <div class="container">
+    {% for note in note %}
+      <label class="note"><b>{{ note.note }}</b></label><br>
+    {% endfor %}
+  </div>
+  </form>
+  <form action = 'http://127.0.0.1:8000/notecreate/' id="formid" title = "" method = 'POST'>
+    <div class="container">
+      <label class="note"><b>Notes</b></label><br>
+      <input type="text" id="note" name="note" ><br>
+    </div>
+    <div>
+      <input type="submit" id="submitButton" name="submitButton" value="Submit">
+    </div>
+  </form><br><hr>
+
+  <form action = 'http://127.0.0.1:8000/voip/' id="formvoipid" title = "" method = 'POST'>
+    <div class="container">
+    <label class="number"><b>Mobile number</b></label><br>
+    <input type="tel" id="number" name="number" placeholder = "+12341234534" ><br>
+    </div>
+    <div>
+      <input type="submit" id="submitButtonphone" name="submitButton" value="Call">
+    </div>
+  </form><hr>
+  {% comment %} <div id="result"></div><br><hr> {% endcomment %}
+
+  <form action = 'http://127.0.0.1:8000/sign/' enctype="multipart/form-data"  id="formsignid" title = "" method = 'POST'>
+  <div class="container">
+    <label class="sign"><b>Signature</b></label><br>
+    <input type="file" accept="image/png, image/jpeg"  id="signature" name="signature" ><br>
+    </div>
+    <div>
+      <input type="submit" id="submitButtonsign" name="submitButton" value="submit">
+    </div>
+  </form>
+
+<div style = "width:350px;height:auto; padding:10px 10px 10px 10px; background-color:black; color:green; ">
+<form method="post" action="http://127.0.0.1:8000/sign/" class="sigPad">
+{% csrf_token %}
+  <div class="sig sigWrapper">
+    <canvas class="pad" width="275" height="200"></canvas>
+    <input type="hidden" name="output" class="output">
+  </div>
+  <div id = "submit">
+    <button type="submit" name="submit">Submit Signature</button>
+  </div>
+  <div id = "clear">
+    <button type="clear" name="clear" class= "clearButton">Clear Signature</button>
+  </div>
+  <div style="clear:both;"></div>
+  
+  </form>
+</div>
+
+</body> 
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'js/java.js' %}"></script>
+<script>
+$("#formid").submit(function(event) {
+
+  /* stop form from submitting normally */
+  event.preventDefault();
+
+  /* get the action attribute from the <form action=""> element */
+  var $form = $(this),
+    url = $form.attr('action');
+
+  /* Send the data using post with element id name and name2*/
+  var posting = $.post(url, {
+    note: $('#note').val(),
+  });
+
+  posting.done(function(data) {
+   location.reload();
+  });
+  posting.fail(function() {
+    $('#result').text('try again');
+  });
+});
+</script>
+<script>
+$("#formvoipid").submit(function(event) {
+
+  /* stop form from submitting normally */
+  event.preventDefault();
+
+  /* get the action attribute from the <form action=""> element */
+  var $form = $(this),
+    url = $form.attr('action');
+
+  /* Send the data using post with element id name and name2*/
+  var posting = $.post(url, {
+    number: $('#number').val(),
+  });
+
+  posting.done(function(data) {
+   $('#result').text('calling you');
+   alert("calling you ...")
+  });
+  posting.fail(function() {
+    $('#result').text('try again');
+  });
+});
+</script>
+
+<script>
+$(document).ready(function (e) {
+    $('#formpdfid').on('submit',(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            type:'POST',
+            url: $(this).attr('action'),
+            data:formData,
+            cache:false,
+            contentType: false,
+            processData: false,
+            success:function(data){
+                console.log("success");
+                console.log(data);
+                alert("pdf file updated")
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+                alert("error")
+            }
+        });
+    }));
+});
+</script>
+
+<script>
+$(document).ready(function (e) {
+    $('#formsignid').on('submit',(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            type:'POST',
+            url: $(this).attr('action'),
+            data:formData,
+            cache:false,
+            contentType: false,
+            processData: false,
+            success:function(data){
+                console.log("success");
+                console.log(data);
+                alert("signature shared")
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+            }
+        });
+    }));
+
+    $("#signature").on("change", function() {
+        $("#formsignid").submit();
+    });
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'js/flashcanvas.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/json2.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.signaturepad.min.js' %}"></script>
+<script>
+$(document).ready(function(){
+    var options ={
+        defaultAction : 'drawIt',
+        drawOnly : true,
+        lineTop : 70,
+        lineMargin : 20,
+        penColour : '#000000',
+    }
+    $('.sigPad').signaturePad(options);
+
+});
+</script>
+
+</html>  
