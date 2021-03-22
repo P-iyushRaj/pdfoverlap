@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from .models import Pdf, Note, Phone, Sign
-from .serializers import PdfSerializer, VoipSerializer, NoteSerializer, SignatureSerializer
+from .models import Pdf, Note, Phone, Sign, Fax
+from .serializers import PdfSerializer, VoipSerializer, NoteSerializer, SignatureSerializer, FaxSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 
@@ -60,6 +60,8 @@ class NoteCreate(CreateAPIView):
 
 
 from twilio.rest import Client
+import os
+from django.conf import settings
 
 class Voip_api(APIView):
 
@@ -69,22 +71,85 @@ class Voip_api(APIView):
             #breakpoint()
             #account_sid = os.environ['TWILIO_ACCOUNT_SID']
             #auth_token = os.environ['TWILIO_AUTH_TOKEN']
-            account_sid = 'ACef24f2e76cd6000bf9aebaeb6e7a2256'
-            auth_token = 'a0506cddf553fa104f9829200d804362'
+            #from_num = os.environ['FROM_TWILIO_NUMBER']
+            account_sid = settings.TWILIO_ACCOUNT_SID
+            auth_token = settings.TWILIO_AUTH_TOKEN
+            from_num = settings.FROM_TWILIO_NUMBER
             client = Client(account_sid, auth_token)
 
             call = client.calls.create(
                                     url='http://demo.twilio.com/docs/voice.xml',
                                     to= str(request.data['number']),
                                     #to='+919474040592',
-                                    from_='+12143076206'
+                                    from_= from_num
                                 )
-
             print(call.sid)
             serializer.save()
             return Response({'msg':'calling... you '}, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#twilio fax api - not working
+class Fax_api(APIView):
+
+    def post(self, request,format=None):
+        serializer = FaxSerializer(data = request.data)
+        if serializer.is_valid():
+            account_sid = settings.TWILIO_ACCOUNT_SID
+            auth_token = settings.TWILIO_AUTH_TOKEN
+            from_num = settings.FROM_TWILIO_NUMBER
+            client = Client(account_sid, auth_token)
+
+            fax = client.fax.faxes \
+                .create(
+                    from_= from_num,
+                    to= str(request.data['number']),
+                    media_url='https://www.twilio.com/docs/documents/25/justthefaxmaam.pdf'
+                )
+
+            print(fax.sid)
+
+            serializer.save()
+            return Response({'msg':'calling... you '}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+'''
+import requests
+
+class Fax_api(APIView):
+
+    def post(self, request,format=None):
+        serializer = FaxSerializer(data = request.data)
+        if serializer.is_valid():
+                        
+            url = "https://api.documo.com/v1/faxes"
+            API_KEY = settings.DOCUMO_API_KEY
+            headers = {
+                'Authorization':  API_KEY ,
+            }
+
+            data = [
+            ('faxNumber', '18885551234'),
+            ('coverPage', 'true'),
+            ('recipientName', 'John'),
+            ('subject', 'test'),
+            ('notes', 'test'),
+            ('tags', '4c225812-81f1-4827-8194-b0e9475c54e6'),
+            ('cf', '{"patientID":"1234"}'),
+            ]
+
+            attachments = [
+                ('file', ('destination11.pdf', open('destination11.pdf', 'rb'), 'application/pdf'),)
+            ]
+
+            requests.post(url, headers=headers, data=data, files=attachments)
+
+            #print(results.text)
+            serializer.save()
+            return Response({'msg':'faxing... you '}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+'''
 
 class Sign_api(CreateAPIView):
     queryset = Sign.objects.values('signature')

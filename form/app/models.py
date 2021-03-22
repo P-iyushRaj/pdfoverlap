@@ -21,6 +21,12 @@ class Phone(models.Model):
     number = PhoneNumberField( null=True, blank =True )
     #number = PhoneField(blank=True, null = True, help_text='Contact phone number')
 
+class Fax(models.Model):
+
+    #number = models.IntegerField(max_length=919474040592, null=True, blank =True )
+    number = PhoneNumberField( null=True, blank =True )
+    #number = PhoneField(blank=True, null = True, help_text='Contact phone number')
+
 class Sign(models.Model):
 
     signature = models.ImageField(upload_to='upload/', null=True, blank =True )

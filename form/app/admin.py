@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Pdf, Note, Phone, Sign
+from .models import Pdf, Note, Phone, Sign, Fax
 
 @admin.register(Pdf)
 class PdfAdmin(admin.ModelAdmin):
@@ -14,6 +14,10 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(Phone)
 class PhoneAdmin(admin.ModelAdmin):
+    list_display = ['id', 'number']
+
+@admin.register(Fax)
+class FaxAdmin(admin.ModelAdmin):
     list_display = ['id', 'number']
 
 @admin.register(Sign)

@@ -62,7 +62,16 @@
       <input type="submit" id="submitButtonphone" name="submitButton" value="Call">
     </div>
   </form><hr>
-  {% comment %} <div id="result"></div><br><hr> {% endcomment %}
+  {% comment %}   <form action = 'http://127.0.0.1:8000/fax/' id="formfaxid" title = "" method = 'POST'>
+    <div class="container">
+    <label class="number"><b>Mobile number</b></label><br>
+    <input type="tel" id="number" name="number" placeholder = "+12341234534" ><br>
+    </div>
+    <div>
+      <input type="submit" id="submitButtonphone" name="submitButton" value="Fax">
+    </div>
+  </form><hr>
+  <div id="result"></div><br><hr> {% endcomment %}
 
   <form action = 'http://127.0.0.1:8000/sign/' enctype="multipart/form-data"  id="formsignid" title = "" method = 'POST'>
   <div class="container">
@@ -79,7 +88,7 @@
   {% csrf_token %}
   <p class="drawItDesc">Click and drag to draw your signature in the box below.</p>
     <div class="sig sigWrapper">
-      <canvas class="pad" width="275" height="200"></canvas>
+      <canvas class="pad" width="275" height="200" ID="myCanvas"></canvas>
       <input type="hidden" name="output" class="output">
     </div>
     <div id = "submit">
@@ -155,6 +164,31 @@ $("#formvoipid").submit(function(event) {
   });
 });
 </script>
+<script>
+$("#formfaxid").submit(function(event) {
+
+  /* stop form from submitting normally */
+  event.preventDefault();
+
+  /* get the action attribute from the <form action=""> element */
+  var $form = $(this),
+    url = $form.attr('action');
+
+  /* Send the data using post with element id name and name2*/
+  var posting = $.post(url, {
+    number: $('#number').val(),
+  });
+
+  posting.done(function(data) {
+   $('#result').text('fax sending');
+   alert("calling you ...")
+  });
+  posting.fail(function() {
+    $('#result').text('try again');
+  });
+});
+</script>
+
 
 <script>
 $(document).ready(function (e) {
@@ -230,31 +264,28 @@ $(document).ready(function(e){
         penColour : '#000000',
     }
     $('.sigPad').signaturePad(options);
-    
-/*
-    $(document).ready(function () {
-  $('.sigPad').signaturePad({displayOnly:true}).regenerate(sig);
-});
-*/
-/*
     $('#formpadid').on('submit',(function(e) {
         e.preventDefault();
-        // alert(api.validateForm());
-        if (api.validateForm()) {
-            var pid = <%=Session["PatientID"].ToString()%>;
+        //alert(api.validateForm());
+        //if (api.validateForm()) {
+            //var pid = <%=Session["PatientID"].ToString()%>;
             var image = document.getElementById("myCanvas").toDataURL("image/png");
-            image = image.replace('data:image/png;base64,', '');
+            console.log(image);
+            //image = image.replace('data:image/png;base64,', '');
+            image.toString()
+            console.log(image);
+            
             $.ajax({
                 type: 'POST',
                 async: false,
-                url: $(this).attr('action'),,
-                data: '{ "imageData" : "' + image + '", "pid" : "' + pid + '" }',
+                url: $(this).attr('action'),
+                data: '{ "imageData" : "' + image + '"}',
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
-                success: function (msg) {
+                success: function (data) {
                     console.log("success");
                     console.log(data);
-                    alert("signature shared")
+                    alert("signature saved")
                     },
                 error: function(data){
                     console.log("error");
@@ -262,43 +293,11 @@ $(document).ready(function(e){
                     alert("sign again plz")
                 }
             });
-
-        }
-        return false;
-    });
-    */
-      });
+       // }
+    }));
+});
+           
 </script>
-<script>
-$('#formpadid').on('submit',(function(e) {
-        e.preventDefault();
-        // alert(api.validateForm());
-        if (api.validateForm()) {
-            var pid = <%=Session["PatientID"].ToString()%>;
-            var image = document.getElementById("myCanvas").toDataURL("image/png");
-            image = image.replace('data:image/png;base64,', '');
-            $.ajax({
-                type: 'POST',
-                async: false,
-                url: $(this).attr('action'),,
-                data: '{ "imageData" : "' + image + '", "pid" : "' + pid + '" }',
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: function (msg) {
-                    console.log("success");
-                    console.log(data);
-                    alert("signature shared")
-                    },
-                error: function(data){
-                    console.log("error");
-                    console.log(data);
-                    alert("sign again plz")
-                }
-            });
 
-        }
-        return false;
-    });
-</script>
 
 </html>  

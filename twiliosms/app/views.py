@@ -17,15 +17,15 @@ class Voip_api(APIView):
             if str(request.data['text']) == 'sms':
                 #account_sid = os.environ['TWILIO_ACCOUNT_SID']
                 #auth_token = os.environ['TWILIO_AUTH_TOKEN']
-                account_sid = 'ACef24f2e76cd6000bf9aebaeb6e7a2256'
-                auth_token = '1f8adc50ca6e40dab739c903f8dc6754'
+                account_sid = 'AC159b6842d3821fba9afc105b63892b49'
+                auth_token = '141287e0d241b47da65dd9aedc54b9f1'
                 client = Client(account_sid, auth_token)
 
                 message = client.messages \
                                 .create(
                                     body= f"the text was : {str(request.data['text'])}",
-                                    from_='+12143076206',
-                                    to='+919474040592'
+                                    from_='+13184977432',
+                                    to='+917985146585'
                                 )
 
                 print(message.sid)
@@ -35,14 +35,14 @@ class Voip_api(APIView):
             if str(request.data['text']) == 'voice':
                 #account_sid = os.environ['TWILIO_ACCOUNT_SID']
                 #auth_token = os.environ['TWILIO_AUTH_TOKEN']
-                account_sid = 'ACef24f2e76cd6000bf9aebaeb6e7a2256'
-                auth_token = '1f8adc50ca6e40dab739c903f8dc6754'
+                account_sid = 'AC159b6842d3821fba9afc105b63892b49'
+                auth_token = '141287e0d241b47da65dd9aedc54b9f1'
                 client = Client(account_sid, auth_token)
 
                 call = client.calls.create(
                                         url='http://demo.twilio.com/docs/voice.xml',
                                         to='+919474040592',
-                                        from_='+12143076206'
+                                        from_='+13184977432'
                                     )
 
                 print(call.sid)
