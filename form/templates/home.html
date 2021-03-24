@@ -20,6 +20,7 @@
       <table>
       <tr>
         <th>Pdf form</th>
+        <th>Page no.</th>
         <th>Form field</th>
         <th>X</th>
         <th>Y</th>
@@ -27,6 +28,7 @@
       
       <tr>
         <td><input id="pdf_file" name="pdf_file" type="file" accept="application/pdf" ></td>
+        <td><input type="number" id="page_no" name="page_no" ></td>
         <td><input type="text" id="text" name="text" ></td>
         <td><input type="number" id="x" name="x" ></td>
         <td><input type="number" id="y" name="y" ></td>
@@ -37,7 +39,7 @@
   </form><br><hr>
 
   <form action="http://127.0.0.1:8000/noteget/" id="formnotegetid" title = "" method = 'GET' >
-  <div class="container">
+  <div class="container" style = "width:350px;height:auto; padding:10px 10px 10px 10px; background-color:yellow; color: black; ">
     {% for note in note %}
       <label class="note"><b>{{ note.note }}</b></label><br>
     {% endfor %}
@@ -62,16 +64,16 @@
       <input type="submit" id="submitButtonphone" name="submitButton" value="Call">
     </div>
   </form><hr>
-  {% comment %}   <form action = 'http://127.0.0.1:8000/fax/' id="formfaxid" title = "" method = 'POST'>
+  <form action = 'http://127.0.0.1:8000/fax/' id="formfaxid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(155, 239, 245); color: black; ">
     <div class="container">
-    <label class="number"><b>Mobile number</b></label><br>
+    <label class="number"><b>Fax number</b></label><br>
     <input type="tel" id="number" name="number" placeholder = "+12341234534" ><br>
     </div>
     <div>
       <input type="submit" id="submitButtonphone" name="submitButton" value="Fax">
     </div>
   </form><hr>
-  <div id="result"></div><br><hr> {% endcomment %}
+  <div id="result"></div><br><hr>
 
   <form action = 'http://127.0.0.1:8000/sign/' enctype="multipart/form-data"  id="formsignid" title = "" method = 'POST'>
   <div class="container">
@@ -181,7 +183,7 @@ $("#formfaxid").submit(function(event) {
 
   posting.done(function(data) {
    $('#result').text('fax sending');
-   alert("calling you ...")
+   alert("fax sent")
   });
   posting.fail(function() {
     $('#result').text('try again');

@@ -1,18 +1,18 @@
 
 from django.db import models
-from phone_field import PhoneField
 from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
 class Pdf(models.Model):
-    pdf_file = models.FileField(upload_to='upload/',  null=True, blank =True )
-    text = models.CharField(max_length=200,  null=True, blank =True )
-    x = models.IntegerField( null=True, blank =True )
-    y = models.IntegerField( null=True, blank =True )
+    pdf_file = models.FileField(upload_to='upload/')
+    text = models.CharField(max_length=200 )
+    x = models.IntegerField( )
+    y = models.IntegerField( )
+    page_no = models.IntegerField( null=True, blank =True )
 
 class Note(models.Model):
-    note = models.CharField(max_length=200,  null=True, blank =True )
+    note = models.CharField(max_length=200 )
 
 
 class Phone(models.Model):

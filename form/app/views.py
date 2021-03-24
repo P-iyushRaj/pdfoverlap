@@ -24,6 +24,7 @@ class Pdf_api(APIView):
             #can.drawString(200, 420, "MANTRA LABS")
             can.save()
             packet.seek(0)
+            #breakpoint()
 
             #import pdb; pdb.set_trace()
             new_pdf = PdfFileReader(packet)
@@ -32,18 +33,38 @@ class Pdf_api(APIView):
             pdffile = open(pdf_path, "rb")
             existing_pdf = PdfFileReader(pdffile)
 
-            #print(request.data['pdf_file'])
             output = PdfFileWriter()
-            page = existing_pdf.getPage(0)
+            #breakpoint()
+            page = existing_pdf.getPage(int(request.data['page_no']))
+            #page = existing_pdf.getPage(0)
             page.mergePage(new_pdf.getPage(0))
-            #import pdb; pdb.set_trace()
+
             output.addPage(page)
             pdfmodified_path = "./media/result/" + str(request.data['pdf_file'])
             outputStream = open(pdfmodified_path, "wb")
             output.write(outputStream)            
             outputStream.close()
 
-            return Response({'msg':'data created', "data":pdfmodified_path}, status=status.HTTP_201_CREATED)
+
+            #breakpoint()
+            pdf_writer = PdfFileWriter()
+            for page in range(existing_pdf.getNumPages()):
+                current_page = existing_pdf.getPage(page)
+                if page == int(request.data['page_no']):
+                    updated_pdf_path = "media/result/" + str(request.data['pdf_file'])
+                    updatedpdffile = open(updated_pdf_path, "rb")
+                    modified_pdf = PdfFileReader(updatedpdffile)
+                    pdf_writer.addPage(modified_pdf.getPage(0))
+
+                else:
+                    pdf_writer.addPage(current_page)
+
+            output_filename = "./media/finalresult/" + str(request.data['pdf_file'])
+            #breakpoint()
+            with open(output_filename, "wb") as out:
+                pdf_writer.write(out)
+
+            return Response({'msg':'data created', "data":output_filename}, status=status.HTTP_201_CREATED)
             #return render(request, 'form.html', {'form' : serializer})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -88,6 +109,7 @@ class Voip_api(APIView):
             return Response({'msg':'calling... you '}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+'''
 #twilio fax api - not working
 class Fax_api(APIView):
 
@@ -127,9 +149,10 @@ class Fax_api(APIView):
             headers = {
                 'Authorization':  API_KEY ,
             }
+            #breakpoint()
 
             data = [
-            ('faxNumber', '18885551234'),
+            ('faxNumber', str(request.data['number'])),
             ('coverPage', 'true'),
             ('recipientName', 'John'),
             ('subject', 'test'),
@@ -137,10 +160,12 @@ class Fax_api(APIView):
             ('tags', '4c225812-81f1-4827-8194-b0e9475c54e6'),
             ('cf', '{"patientID":"1234"}'),
             ]
+            file_path = "./media/upload/AC-prescription-start-form_1NLgd42.pdf"
 
             attachments = [
-                ('file', ('destination11.pdf', open('destination11.pdf', 'rb'), 'application/pdf'),)
+                ('file', ('AC-prescription-start-form_1NLgd42.pdf', open(file_path , 'rb'), 'application/pdf'),)
             ]
+            #breakpoint()
 
             requests.post(url, headers=headers, data=data, files=attachments)
 
@@ -149,7 +174,7 @@ class Fax_api(APIView):
             return Response({'msg':'faxing... you '}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-'''
+
 
 class Sign_api(CreateAPIView):
     queryset = Sign.objects.values('signature')

@@ -5,7 +5,7 @@ from .models import Pdf, Note, Phone, Sign, Fax
 class PdfSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pdf
-        fields = ['id','pdf_file', 'text', 'x', 'y']
+        fields = ['id','pdf_file','page_no', 'text', 'x', 'y']
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:

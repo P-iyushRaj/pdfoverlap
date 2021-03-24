@@ -128,9 +128,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 TWILIO_ACCOUNT_SID = 'ACef24f2e76cd6000bf9aebaeb6e7a2256'
-TWILIO_AUTH_TOKEN = 'fa470a401d4775a38cf8373a8ed7987f'
+TWILIO_AUTH_TOKEN = 'cb71e93a3739dd6b696f29af81ebcb64'
 FROM_TWILIO_NUMBER = '+12143076206'
-DOCUMO_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyZDJlN2NiZS0xOWE2LTQxYjUtYmNjZS00MDcxZmQ1NDg0ZTIiLCJhY2NvdW50SWQiOiJjY2E0ODhiOS00MWU3LTQxYTgtYmIzMC1iYmUxOWUzZTExNjgiLCJpYXQiOjE2MTYzOTc2NzJ9.AoEV_e6PcLOcM_PNcRdquMzWTCoPzXV1qCDyhI7X2Mg'
+DOCUMO_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyZDJlN2NiZS0xOWE2LTQxYjUtYmNjZS00MDcxZmQ1NDg0ZTIiLCJhY2NvdW50SWQiOiJjY2E0ODhiOS00MWU3LTQxYTgtYmIzMC1iYmUxOWUzZTExNjgiLCJpYXQiOjE2MTY0OTc2MTJ9.WxGU8OKaip5WFYn4t2msok2qRM4x7UpigKu1Q2RKQx4'
+
 
 STATIC_URL = '/static/'
 STATIC_DIR = BASE_DIR + '/static'
@@ -148,7 +149,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 #STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+'''
 import dj_database_url
 prod_db = dj_database_url.config(conn_max_age = 500)
 DATABASES['default'].update(prod_db)
- 
+ '''
