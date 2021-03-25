@@ -21,7 +21,7 @@ class VoipSerializer(serializers.ModelSerializer):
 class FaxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fax
-        fields = ['id','number']
+        fields = ['id','faxnumber', 'fax_file']
 
 class SignatureSerializer(serializers.ModelSerializer):
     class Meta:

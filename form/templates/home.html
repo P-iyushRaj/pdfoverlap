@@ -61,16 +61,18 @@
     <input type="tel" id="number" name="number" placeholder = "+12341234534" ><br>
     </div>
     <div>
-      <input type="submit" id="submitButtonphone" name="submitButton" value="Call">
+      <input type="submit" id="submitButtonphone" name="submitButtonphone" value="Call">
     </div>
   </form><hr>
   <form action = 'http://127.0.0.1:8000/fax/' id="formfaxid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(155, 239, 245); color: black; ">
     <div class="container">
     <label class="number"><b>Fax number</b></label><br>
-    <input type="tel" id="number" name="number" placeholder = "+12341234534" ><br>
+    <input type="tel" id="faxnumber" name="faxnumber" placeholder = "+12341234534" ><br>
+    <label class="fax_file"><b>upload file</b></label><br>
+    <input id="fax_file" name="fax_file" type="file" accept="application/pdf, image/png, image/jpeg" >
     </div>
     <div>
-      <input type="submit" id="submitButtonphone" name="submitButton" value="Fax">
+      <input type="submit" id="submitButtonfax" name="submitButtonfax" value="Fax">
     </div>
   </form><hr>
   <div id="result"></div><br><hr>
@@ -167,27 +169,30 @@ $("#formvoipid").submit(function(event) {
 });
 </script>
 <script>
-$("#formfaxid").submit(function(event) {
+$(document).ready(function (e) {
+      $('#formfaxid').on('submit',(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
 
-  /* stop form from submitting normally */
-  event.preventDefault();
-
-  /* get the action attribute from the <form action=""> element */
-  var $form = $(this),
-    url = $form.attr('action');
-
-  /* Send the data using post with element id name and name2*/
-  var posting = $.post(url, {
-    number: $('#number').val(),
-  });
-
-  posting.done(function(data) {
-   $('#result').text('fax sending');
-   alert("fax sent")
-  });
-  posting.fail(function() {
-    $('#result').text('try again');
-  });
+        $.ajax({
+            type:'POST',
+            url: $(this).attr('action'),
+            data:formData,
+            cache:false,
+            contentType: false,
+            processData: false,
+            success:function(data){
+                console.log("success");
+                console.log(data);
+                alert("pdf file updated")
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+                alert("error")
+            }
+        });
+    }));
 });
 </script>
 
@@ -266,6 +271,16 @@ $(document).ready(function(e){
         penColour : '#000000',
     }
     $('.sigPad').signaturePad(options);
+
+    function dataURLtoFile(dataurl, filename) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+    }
+
     $('#formpadid').on('submit',(function(e) {
         e.preventDefault();
         //alert(api.validateForm());
@@ -274,14 +289,16 @@ $(document).ready(function(e){
             var image = document.getElementById("myCanvas").toDataURL("image/png");
             console.log(image);
             //image = image.replace('data:image/png;base64,', '');
-            image.toString()
-            console.log(image);
+            //image.toString()
+            //console.log(image);
+            var file = dataURLtoFile( image, 'a.png');
+            console.log(file);
             
             $.ajax({
                 type: 'POST',
                 async: false,
                 url: $(this).attr('action'),
-                data: '{ "imageData" : "' + image + '"}',
+                data: file,
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (data) {

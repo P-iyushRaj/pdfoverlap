@@ -18,7 +18,7 @@ class PhoneAdmin(admin.ModelAdmin):
 
 @admin.register(Fax)
 class FaxAdmin(admin.ModelAdmin):
-    list_display = ['id', 'number']
+    list_display = ['id', 'faxnumber']
 
 @admin.register(Sign)
 class SignAdmin(admin.ModelAdmin):

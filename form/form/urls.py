@@ -13,9 +13,10 @@ urlpatterns = [
     path( 'noteget/', views.NoteList.as_view()),
     path( 'notecreate/', views.NoteCreate.as_view()),
 
-    path('voip/', views.Voip_api.as_view()),
+
 
     path('fax/', views.Fax_api.as_view()),
+    path('voip/', views.Voip_api.as_view()),
 
     path('sign/', views.Sign_api.as_view()),
 

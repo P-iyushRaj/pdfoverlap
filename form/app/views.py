@@ -38,14 +38,11 @@ class Pdf_api(APIView):
             page = existing_pdf.getPage(int(request.data['page_no']))
             #page = existing_pdf.getPage(0)
             page.mergePage(new_pdf.getPage(0))
-
             output.addPage(page)
             pdfmodified_path = "./media/result/" + str(request.data['pdf_file'])
             outputStream = open(pdfmodified_path, "wb")
             output.write(outputStream)            
             outputStream.close()
-
-
             #breakpoint()
             pdf_writer = PdfFileWriter()
             for page in range(existing_pdf.getNumPages()):
@@ -55,17 +52,13 @@ class Pdf_api(APIView):
                     updatedpdffile = open(updated_pdf_path, "rb")
                     modified_pdf = PdfFileReader(updatedpdffile)
                     pdf_writer.addPage(modified_pdf.getPage(0))
-
                 else:
                     pdf_writer.addPage(current_page)
-
             output_filename = "./media/finalresult/" + str(request.data['pdf_file'])
             #breakpoint()
             with open(output_filename, "wb") as out:
                 pdf_writer.write(out)
-
             return Response({'msg':'data created', "data":output_filename}, status=status.HTTP_201_CREATED)
-            #return render(request, 'form.html', {'form' : serializer})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -89,7 +82,6 @@ class Voip_api(APIView):
     def post(self, request,format=None):
         serializer = VoipSerializer(data = request.data)
         if serializer.is_valid():
-            #breakpoint()
             #account_sid = os.environ['TWILIO_ACCOUNT_SID']
             #auth_token = os.environ['TWILIO_AUTH_TOKEN']
             #from_num = os.environ['FROM_TWILIO_NUMBER']
@@ -102,45 +94,18 @@ class Voip_api(APIView):
                                     url='http://demo.twilio.com/docs/voice.xml',
                                     to= str(request.data['number']),
                                     #to='+919474040592',
-                                    from_= from_num
-                                )
-            print(call.sid)
+                                    from_= from_num)
+            #print(call.sid)
             serializer.save()
             return Response({'msg':'calling... you '}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-'''
-#twilio fax api - not working
-class Fax_api(APIView):
-
-    def post(self, request,format=None):
-        serializer = FaxSerializer(data = request.data)
-        if serializer.is_valid():
-            account_sid = settings.TWILIO_ACCOUNT_SID
-            auth_token = settings.TWILIO_AUTH_TOKEN
-            from_num = settings.FROM_TWILIO_NUMBER
-            client = Client(account_sid, auth_token)
-
-            fax = client.fax.faxes \
-                .create(
-                    from_= from_num,
-                    to= str(request.data['number']),
-                    media_url='https://www.twilio.com/docs/documents/25/justthefaxmaam.pdf'
-                )
-
-            print(fax.sid)
-
-            serializer.save()
-            return Response({'msg':'calling... you '}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-'''
 #https://app.documo.com/fax/history
 #https://docs.documo.com/?python#send-multiple-faxes
 #https://support.twilio.com/hc/en-us/articles/1260800821230-Programmable-Fax-Migration-Guide-for-Documo-mFax
 
 import requests
+import json
 
 class Fax_api(APIView):
 
@@ -150,37 +115,29 @@ class Fax_api(APIView):
                         
             url = "https://api.documo.com/v1/faxes"
             API_KEY = str(settings.DOCUMO_API_KEY)
-            Basic_api_key = 'Basic' + API_KEY
-            headers = {
-                'Authorization':  Basic_api_key ,
-            }
+            Basic_api_key = 'Basic ' + API_KEY
+            headers = { 'Authorization':  Basic_api_key ,}
             #breakpoint()
-
             data = [
-            ('faxNumber', str(request.data['number'])),
-            ('coverPage', 'true'),
+            ('faxNumber', str(request.data['faxnumber'])),
+            ('coverPage', 'false'),
             ('recipientName', 'John'),
             ('subject', 'test'),
             ('notes', 'test'),
             ('tags', '4c225812-81f1-4827-8194-b0e9475c54e6'),
-            ('cf', '{"patientID":"1234"}'),
-            ]
-            file_path = "/Users/piyushraj/Desktop/check.png"
-
-            attachments = [
-                ('file', ('check.png', open(file_path , 'rb'), 'application/png'),)
-            ]
+            ('cf', '{"patientID":"1234"}'),]
             #breakpoint()
+            #attachments = [('file', ('check.png', open(file_path , 'rb'), 'application/png'),)]
+            attachments = [('file', ('check.png', request.data['fax_file']),)]
+            res = requests.post(url, headers=headers, data=data, files=attachments)
+            response = json.loads(res.text)
 
-            requests.post(url, headers=headers, data=data, files=attachments)
-            #error can't fax more than 50 pages in trial account
-
-            #print(results.text)
-            serializer.save()
-            return Response({'msg':'faxing... you '}, status=status.HTTP_201_CREATED)
+            try:
+                return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                serializer.save()
+                return Response({'msg':'fax sent'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 class Sign_api(CreateAPIView):
     queryset = Sign.objects.values('signature')
