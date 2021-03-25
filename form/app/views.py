@@ -136,6 +136,10 @@ class Fax_api(APIView):
 
 
 '''
+#https://app.documo.com/fax/history
+#https://docs.documo.com/?python#send-multiple-faxes
+#https://support.twilio.com/hc/en-us/articles/1260800821230-Programmable-Fax-Migration-Guide-for-Documo-mFax
+
 import requests
 
 class Fax_api(APIView):
@@ -145,9 +149,10 @@ class Fax_api(APIView):
         if serializer.is_valid():
                         
             url = "https://api.documo.com/v1/faxes"
-            API_KEY = settings.DOCUMO_API_KEY
+            API_KEY = str(settings.DOCUMO_API_KEY)
+            Basic_api_key = 'Basic' + API_KEY
             headers = {
-                'Authorization':  API_KEY ,
+                'Authorization':  Basic_api_key ,
             }
             #breakpoint()
 
@@ -160,14 +165,15 @@ class Fax_api(APIView):
             ('tags', '4c225812-81f1-4827-8194-b0e9475c54e6'),
             ('cf', '{"patientID":"1234"}'),
             ]
-            file_path = "./media/upload/AC-prescription-start-form_1NLgd42.pdf"
+            file_path = "/Users/piyushraj/Desktop/check.png"
 
             attachments = [
-                ('file', ('AC-prescription-start-form_1NLgd42.pdf', open(file_path , 'rb'), 'application/pdf'),)
+                ('file', ('check.png', open(file_path , 'rb'), 'application/png'),)
             ]
             #breakpoint()
 
             requests.post(url, headers=headers, data=data, files=attachments)
+            #error can't fax more than 50 pages in trial account
 
             #print(results.text)
             serializer.save()
