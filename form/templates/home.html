@@ -213,7 +213,7 @@ $(document).ready(function (e) {
             success:function(data){
                 console.log("success");
                 console.log(data);
-                alert("pdf file updated")
+                alert("fax sent")
             },
             error: function(data){
                 console.log("error");
@@ -272,14 +272,14 @@ $(document).ready(function(e){
     }
     $('.sigPad').signaturePad(options);
 
-    function dataURLtoFile(dataurl, filename) {
-        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new File([u8arr], filename, {type:mime});
-    }
+    // function dataURLtoFile(dataurl, filename) {
+    //     var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+    //         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    //     while(n--){
+    //         u8arr[n] = bstr.charCodeAt(n);
+    //     }
+    //     return new File([u8arr], filename, {type:mime});
+    // }
 
     $('#formpadid').on('submit',(function(e) {
         e.preventDefault();
@@ -291,14 +291,14 @@ $(document).ready(function(e){
             //image = image.replace('data:image/png;base64,', '');
             //image.toString()
             //console.log(image);
-            var file = dataURLtoFile( image, 'a.png');
-            console.log(file);
-            
+            //var file = dataURLtoFile( image, 'a.png');
+            //console.log(file);
+
             $.ajax({
                 type: 'POST',
                 async: false,
                 url: $(this).attr('action'),
-                data: file,
+                data: image,
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (data) {
