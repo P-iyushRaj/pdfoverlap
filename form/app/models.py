@@ -47,7 +47,7 @@ class SignNow(models.Model):
     #types = models.CharField(choices=type_choice, max_length=100, null=True, blank =True )
     page_number = models.IntegerField(null=True, blank =True )
 
-    reciever_mailid = models.EmailField(max_length=2540, null=True, blank =True )
+    reciever_mailid = models.EmailField(max_length=254, null=True, blank =True )
 
     objects = models.Manager()
 

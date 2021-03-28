@@ -102,19 +102,31 @@
       <button type="clear" name="clear" class= "clearButton">Clear Signature</button>
     </div>
     <div style="clear:both;"></div>
-  
   </form>
-{% comment %}   
-</div>
-	<h1 style="text-align:center;">Regenerate a User's Saved Signature</h1>
-	<div style="width:350px;height:auto;margin:50px auto;padding: 20px 0;background-color:#fff;border:1px dotted #999;">
-		<div class="signed">
-			<div class="sigWrapper">
-				<canvas class="pad" width="275" height="90"></canvas>
-			</div>
-		</div>
-		<center><button name="get" type="button" id="get">Get Signature</button></center>
-	</div> {% endcomment %}
+</div><hr>
+
+<form action = 'http://127.0.0.1:8000/signnow/' id="formsignnowid" title = "" method = 'POST' >
+    <div class="container">
+      <table>
+      <tr>
+        <th>Pdf form</th>
+        <th>X</th>
+        <th>Y</th>
+        <th>page_number</th>
+        <th>reciever_mailid</th>
+      </tr>
+      
+      <tr>
+        <td><input id="pdf_file_now" name="pdf_file_now" type="file" accept="application/pdf" ></td>
+        <td><input type="number" id="x_s" name="x_s" ></td>
+        <td><input type="number" id="y_s" name="y_s" ></td>
+        <td><input type="number" id="page_number" name="page_number" ></td>
+        <td><input type="text" id="reciever_mailid" name="reciever_mailid" ></td>
+      </tr>
+      </table>
+    </div> 
+    <div><input type="submit" id="submitButtonsignnow" name="submitButtonsignnow" value="mail for sign"></div>
+  </form><br><hr>
 
 </body> 
 
@@ -314,8 +326,38 @@ $(document).ready(function(e){
             });
        // }
     }));
+});  
+</script>
+
+
+<script>
+$(document).ready(function (e) {
+    $('#formsignnowid').on('submit',(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            type:'POST',
+            url: $(this).attr('action'),
+            data:formData,
+            cache:false,
+            contentType: false,
+            //contentType: 'application/json',
+            dataType: 'json',
+            processData: false,
+            success:function(data){
+                console.log("success");
+                console.log(data);
+                alert("mail sent")
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+                alert("error")
+            }
+        });
+    }));
 });
-           
 </script>
 
 

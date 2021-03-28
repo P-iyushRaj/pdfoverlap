@@ -172,8 +172,8 @@ class SignNow_api(APIView):
                 res2 = putfield(data = request.data, serializer=serializer, headers =headers)
                 res3 = invitesigner( data = request.data, serializer=serializer, headers =headers )
 
-                breakpoint()
-                return Response({'msg':'document uploaded on signnow + fields added'}, status=status.HTTP_201_CREATED)
+                #breakpoint()
+                return Response({'msg':'document uploaded on signnow + fields added + mailed to signer'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def putfield( data, serializer, headers):
@@ -198,6 +198,7 @@ def putfield( data, serializer, headers):
 
 def invitesigner( data, serializer, headers ):
     url = "https://api-eval.signnow.com/document/" + str(serializer.data['doc_id']) + "/invite"
+
     payload_1 = {
             "document_id": str(serializer.data['doc_id']),
             "subject": "piyushraj4598@gmail.com Needs Your Signature",
@@ -205,15 +206,18 @@ def invitesigner( data, serializer, headers ):
             "from": "piyushraj4598@gmail.com",
             "to": [
                 {
-                "email": str(serializer.data['reciever_mailid']),
+                "email": str(data['reciever_mailid']),
                 "role_id": "34cc1705151a626d9a89ed93bb6c8c2979adffc8",
                 "role": "Signer 1",
                 "order": "1"
             }
         ]
         }
+    
     payload = json.dumps(payload_1)
     response = requests.request("POST", url, headers=headers, data=payload)
+
+    
     try:
         return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
     except:
