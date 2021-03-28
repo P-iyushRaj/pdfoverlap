@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from .models import Pdf, Note, Phone, Sign, Fax
-from .serializers import PdfSerializer, VoipSerializer, NoteSerializer, SignatureSerializer, FaxSerializer
+from .serializers import PdfSerializer, VoipSerializer, NoteSerializer, SignatureSerializer, FaxSerializer, SignNowSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 
@@ -142,6 +142,85 @@ class Fax_api(APIView):
 class Sign_api(CreateAPIView):
     queryset = Sign.objects.values('signature')
     serializer_class = SignatureSerializer
+
+#signnow
+import requests
+
+class SignNow_api(APIView):
+
+    def post(self, request,format=None):
+        serializer = SignNowSerializer(data = request.data)
+        if serializer.is_valid():
+                        
+            url = "https://api-eval.signnow.com/document"
+            ACCESS_KEY = str(settings.SIGNNOW_ACCESS_KEY)
+            Bearer_api_key = 'Bearer ' + ACCESS_KEY
+            headers = { 'Authorization':  Bearer_api_key ,}
+
+            payload={}
+            #breakpoint()
+            attachments = [('file', (str(request.data['pdf_file_now']), request.data['pdf_file_now']),)]
+
+            res = requests.request("POST", url, headers=headers, data=payload, files=attachments)
+            response = json.loads(res.text)
+            # print(res.text) #{"id":"4b0ad8f45a0f421bbb37aca57d748246c1176eb8"}
+
+            try:
+                return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                serializer.save(doc_id = str(response['id']))
+                res2 = putfield(data = request.data, serializer=serializer, headers =headers)
+                res3 = invitesigner( data = request.data, serializer=serializer, headers =headers )
+
+                breakpoint()
+                return Response({'msg':'document uploaded on signnow + fields added'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def putfield( data, serializer, headers):
+    url = "https://api-eval.signnow.com/document/" + str(serializer.data['doc_id'])
+    payload_1={"fields": [{
+            "x": int(data["x_s"]),
+            "y": int(data["y_s"]),
+            "width": 100,
+            "height": 50,
+            "page_number": int(data["page_number"]),
+            "label": "sign here",
+            "role": "Signer 1",
+            "required": True,
+            "type": "signature",
+        }]}
+    payload = json.dumps(payload_1)
+    response = requests.request("PUT", url, headers=headers, data=payload)
+    try:
+        return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({'msg':'signature field added on signnow', 'data':response}, status=status.HTTP_201_CREATED)
+
+def invitesigner( data, serializer, headers ):
+    url = "https://api-eval.signnow.com/document/" + str(serializer.data['doc_id']) + "/invite"
+    payload_1 = {
+            "document_id": str(serializer.data['doc_id']),
+            "subject": "piyushraj4598@gmail.com Needs Your Signature",
+            "message": "piyushraj4598@gmail.com invited you to sign \"Request one signature\"",
+            "from": "piyushraj4598@gmail.com",
+            "to": [
+                {
+                "email": str(serializer.data['reciever_mailid']),
+                "role_id": "34cc1705151a626d9a89ed93bb6c8c2979adffc8",
+                "role": "Signer 1",
+                "order": "1"
+            }
+        ]
+        }
+    payload = json.dumps(payload_1)
+    response = requests.request("POST", url, headers=headers, data=payload)
+    try:
+        return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({'msg':'signature field added on signnow', 'data':response}, status=status.HTTP_201_CREATED)
+
+
+
 
 
 from django.http import HttpResponse

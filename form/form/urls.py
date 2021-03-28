@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.urls import path, include
 from app import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pdffile/', views.Pdf_api.as_view()),
@@ -19,6 +20,8 @@ urlpatterns = [
     path('voip/', views.Voip_api.as_view()),
 
     path('sign/', views.Sign_api.as_view()),
+
+    path('signnow/', views.SignNow_api.as_view()),
 
     path('app/', include('app.urls')),
     

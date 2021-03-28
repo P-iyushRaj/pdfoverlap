@@ -213,7 +213,7 @@ $(document).ready(function (e) {
             success:function(data){
                 console.log("success");
                 console.log(data);
-                alert("fax sent")
+                alert("pdf updated")
             },
             error: function(data){
                 console.log("error");
@@ -298,7 +298,7 @@ $(document).ready(function(e){
                 type: 'POST',
                 async: false,
                 url: $(this).attr('action'),
-                data: image,
+                data: '{ "imageData" : "' + image + '"}',
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (data) {
