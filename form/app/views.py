@@ -15,12 +15,11 @@ class Pdf_api(APIView):
     def post(self, request,format=None):
         serializer = PdfSerializer(data = request.data)
         if serializer.is_valid():
-            #import pdb; pdb.set_trace()
             serializer.save()
 
             packet = io.BytesIO()
             can = canvas.Canvas(packet, pagesize=letter)
-            can.drawString(int(request.data['x']), int(request.data['x']), str(request.data['text']))
+            can.drawString(int(request.data['x']), int(request.data['y']), str(request.data['text']))
             #can.drawString(200, 420, "MANTRA LABS")
             can.save()
             packet.seek(0)
@@ -61,9 +60,7 @@ class Pdf_api(APIView):
             return Response({'msg':'data created', "data":output_filename}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 from rest_framework.generics import ListAPIView,CreateAPIView
-
 class NoteList(ListAPIView):
     queryset = Note.objects.values('note')
     serializer_class = NoteSerializer
@@ -150,20 +147,18 @@ class SignNow_api(APIView):
 
     def post(self, request,format=None):
         serializer = SignNowSerializer(data = request.data)
-        if serializer.is_valid():
-                        
+        if serializer.is_valid():                
             url = "https://api-eval.signnow.com/document"
             ACCESS_KEY = str(settings.SIGNNOW_ACCESS_KEY)
             Bearer_api_key = 'Bearer ' + ACCESS_KEY
             headers = { 'Authorization':  Bearer_api_key ,}
-
             payload={}
             #breakpoint()
             attachments = [('file', (str(request.data['pdf_file_now']), request.data['pdf_file_now']),)]
-
             res = requests.request("POST", url, headers=headers, data=payload, files=attachments)
             response = json.loads(res.text)
             # print(res.text) #{"id":"4b0ad8f45a0f421bbb37aca57d748246c1176eb8"}
+            #breakpoint()
 
             try:
                 return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
@@ -181,14 +176,26 @@ def putfield( data, serializer, headers):
     payload_1={"fields": [{
             "x": int(data["x_s"]),
             "y": int(data["y_s"]),
-            "width": 100,
-            "height": 50,
+            "width": 120,
+            "height": 70,
             "page_number": int(data["page_number"]),
             "label": "sign here",
             "role": "Signer 1",
             "required": True,
             "type": "signature",
-        }]}
+        }
+        # {
+        #     "x": int(data["x_t"]),
+        #     "y": int(data["y_t"]),
+        #     "width": 90,
+        #     "height": 20,
+        #     "page_number": int(data["page_number_t"]),
+        #     "label": "text here",
+        #     "role": "Signer 1",
+        #     "required": True,
+        #     "type": "text",
+        # }
+        ]}
     payload = json.dumps(payload_1)
     response = requests.request("PUT", url, headers=headers, data=payload)
     try:

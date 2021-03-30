@@ -41,6 +41,7 @@ class SignNowFieldputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SignNow
+        #fields = ['id','pdf_file_now', 'doc_id', 'x_s', 'y_s',  'page_number','x_t', 'y_t',  'page_number_t', 'reciever_mailid']
         fields = ['id','pdf_file_now', 'doc_id', 'x_s', 'y_s',  'page_number', 'reciever_mailid']
 
         extra_kwargs = {'pdf_file_now': {'required': True, 'allow_null': False}}

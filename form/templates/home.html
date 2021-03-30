@@ -15,29 +15,6 @@
     <hr>
     <div id="result"></div>
 
-  <form action = 'http://127.0.0.1:8000/pdffile/' id="formpdfid" title = "" method = 'POST' >
-    <div class="container">
-      <table>
-      <tr>
-        <th>Pdf form</th>
-        <th>Page no.</th>
-        <th>Form field</th>
-        <th>X</th>
-        <th>Y</th>
-      </tr>
-      
-      <tr>
-        <td><input id="pdf_file" name="pdf_file" type="file" accept="application/pdf" ></td>
-        <td><input type="number" id="page_no" name="page_no" ></td>
-        <td><input type="text" id="text" name="text" ></td>
-        <td><input type="number" id="x" name="x" ></td>
-        <td><input type="number" id="y" name="y" ></td>
-      </tr>
-      </table>
-    </div> 
-    <div><input type="submit" id="submitButtonpdf" name="submitButton" value="Submit"></div>
-  </form><br><hr>
-
   <form action="http://127.0.0.1:8000/noteget/" id="formnotegetid" title = "" method = 'GET' >
   <div class="container" style = "width:350px;height:auto; padding:10px 10px 10px 10px; background-color:yellow; color: black; ">
     {% for note in note %}
@@ -105,7 +82,29 @@
   </form>
 </div><hr>
 
-<form action = 'http://127.0.0.1:8000/signnow/' id="formsignnowid" title = "" method = 'POST' >
+  <form action = 'http://127.0.0.1:8000/pdffile/' id="formpdfid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(255, 154, 204); color: black;">
+    <div class="container">
+      <table>
+      <tr>
+        <th>Pdf form</th>
+        <th>Page no.</th>
+        <th>Form field</th>
+        <th>X</th>
+        <th>Y</th>
+      </tr>
+      <tr>
+        <td><input id="pdf_file" name="pdf_file" type="file" accept="application/pdf" ></td>
+        <td><input type="number" id="page_no" name="page_no" ></td>
+        <td><input type="text" id="text" name="text" ></td>
+        <td><input type="number" id="x" name="x" ></td>
+        <td><input type="number" id="y" name="y" ></td>
+      </tr>
+      </table>
+    </div> 
+    <div><input type="submit" id="submitButtonpdf" name="submitButtonpdf" value="Submit"></div>
+  </form><br><hr>
+
+<form action = 'http://127.0.0.1:8000/signnow/' id="formsignnowid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(155, 255, 255); color: black;">
     <div class="container">
       <table>
       <tr>
@@ -115,14 +114,28 @@
         <th>page_number</th>
         <th>reciever_mailid</th>
       </tr>
-      
       <tr>
         <td><input id="pdf_file_now" name="pdf_file_now" type="file" accept="application/pdf" ></td>
-        <td><input type="number" id="x_s" name="x_s" ></td>
-        <td><input type="number" id="y_s" name="y_s" ></td>
-        <td><input type="number" id="page_number" name="page_number" ></td>
-        <td><input type="text" id="reciever_mailid" name="reciever_mailid" ></td>
+        <td><input type="number" id="x_s" name="x_s" placeholder="signature x-location"></td>
+        <td><input type="number" id="y_s" name="y_s" placeholder="signature y-location"></td>
+        <td><input type="number" id="page_number" name="page_number" placeholder="signature on page num"></td>
+        <td><input type="text" id="reciever_mailid" name="reciever_mailid" placeholder="aaaaaaa@gmail.com"></td>
       </tr>
+      
+      {% comment %} <tr>
+        <td><input id="pdf_file_now" name="pdf_file_now" type="file" accept="application/pdf" ></td>
+        <td><input type="number" id="x_t" name="x_t" placeholder="text x-location"></td>
+        <td><input type="number" id="y_t" name="y_t" placeholder="text y-location"></td>
+        <td><input type="number" id="page_number_t" name="page_number_t" placeholder="text on page num"></td>
+      </tr>
+      <tr>
+        <td colspan="0"></td>
+        <td><input type="number" id="x_s" name="x_s" placeholder="signature x-location"></td>
+        <td><input type="number" id="y_s" name="y_s" placeholder="signature y-location"></td>
+        <td><input type="number" id="page_number" name="page_number" placeholder="signature on page num"></td>
+        <td><input type="text" id="reciever_mailid" name="reciever_mailid" placeholder="aaaaaaa@gmail.com"></td>
+      </tr> {% endcomment %}
+
       </table>
     </div> 
     <div><input type="submit" id="submitButtonsignnow" name="submitButtonsignnow" value="mail for sign"></div>
