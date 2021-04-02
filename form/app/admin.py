@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Pdf, Note, Phone, Sign, Fax, SignNow
+from .models import Pdf, Note, Phone, Sign, Fax, SignNow, htmlformsign
 
 @admin.register(Pdf)
 class PdfAdmin(admin.ModelAdmin):
@@ -28,4 +28,6 @@ class SignAdmin(admin.ModelAdmin):
 class SignNowAdmin(admin.ModelAdmin):
     list_display = ['id']
     
-    
+@admin.register(htmlformsign)
+class SignNowAdmin(admin.ModelAdmin):
+    list_display = ['id']

@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Pdf, Note, Phone, Sign, Fax, SignNow
+from .models import Pdf, Note, Phone, Sign, Fax, SignNow, htmlformsign
 
 class PdfSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,10 +42,14 @@ class SignNowFieldputSerializer(serializers.ModelSerializer):
     class Meta:
         model = SignNow
         #fields = ['id','pdf_file_now', 'doc_id', 'x_s', 'y_s',  'page_number','x_t', 'y_t',  'page_number_t', 'reciever_mailid']
-        fields = ['id','pdf_file_now', 'doc_id', 'x_s', 'y_s',  'page_number', 'reciever_mailid']
+        fields = ['id','pdf_file_now', 'reciever_mailid']
 
         extra_kwargs = {'pdf_file_now': {'required': True, 'allow_null': False}}
         #extra_kwargs = {'doc_id': {'required': True, 'allow_null': False}}
 
                 
-
+class SignatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = htmlformsign
+        fields = ['id','name']
+        

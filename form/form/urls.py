@@ -23,6 +23,8 @@ urlpatterns = [
 
     path('signnow/', views.SignNow_api.as_view()),
 
+    path('SignNowhtml/', views.SignNowhtmlform_api.as_view()),
+
     path('app/', include('app.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

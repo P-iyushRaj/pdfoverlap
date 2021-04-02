@@ -55,4 +55,9 @@ class SignNow(models.Model):
 
     objects = models.Manager()
 
+class htmlformsign(models.Model):
+    
+    name = models.CharField(max_length=200 , null=True, blank =True )
+    mobilenum = PhoneNumberField( null=True, blank =True )
 
+    objects = models.Manager()

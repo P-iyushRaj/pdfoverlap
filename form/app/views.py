@@ -171,35 +171,73 @@ class SignNow_api(APIView):
                 return Response({'msg':'document uploaded on signnow + fields added + mailed to signer'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def putfield( data, serializer, headers):
-    url = "https://api-eval.signnow.com/document/" + str(serializer.data['doc_id'])
+
+#signnowhtml form
+import requests
+
+class SignNowhtmlform_api(APIView):
+
+    def get(self, request,format=None):
+        ACCESS_KEY = str(settings.SIGNNOW_ACCESS_KEY)
+        Bearer_api_key = 'Bearer ' + ACCESS_KEY
+        headers = { 'Authorization':  Bearer_api_key ,}
+        try:
+            res1 = docupload(headers =headers)
+            
+            res2 = putfield(data = res1.data['data'], headers =headers)
+            res3 = CreateSigningLink( data = res2.data['data'], headers =headers )
+            #breakpoint()
+            return Response({'msg':'document uploaded on signnow + fields added + mailed to signer', 'data':res3.data['data']}, status=status.HTTP_201_CREATED)
+        except:
+            return Response({'msg':"errors"}, status=status.HTTP_400_BAD_REQUEST)
+
+import requests
+def CreateSigningLink(data, headers):
+    url = "https://api-eval.signnow.com/link"
+    #breakpoint()
+    payload=json.dumps({"document_id": str(data['id'])})
+    res = requests.request("POST", url, headers=headers, data=payload)
+    response = json.loads(res.text)
+    #breakpoint()
+    try:
+        return Response({'msg':response['errors']['message']}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({'msg':'doc file uploaded signnow', 'data':response}, status=status.HTTP_201_CREATED)
+
+
+
+def docupload(headers):
+    
+    url = "https://api-eval.signnow.com/document"
+    payload={}
+    attachments = [('file', ('check.docx', open("/Users/piyushraj/Desktop/pdfoverlap/form/Untitled document.docx" , 'rb')),)]
+    res = requests.request("POST", url, headers=headers, data=payload, files=attachments)
+    response = json.loads(res.text)
+    #breakpoint()
+    try:
+        return Response({'msg':response['errors']['message']}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({'msg':'doc file uploaded signnow', 'data':response}, status=status.HTTP_201_CREATED)
+
+def putfield( data, headers):
+    #breakpoint()
+    url = "https://api-eval.signnow.com/document/" + str(data['id'])
     payload_1={"fields": [{
-            "x": int(data["x_s"]),
-            "y": int(data["y_s"]),
+            "x": 20,
+            "y": 40,
             "width": 120,
             "height": 70,
-            "page_number": int(data["page_number"]),
+            "page_number": 0,
             "label": "sign here",
             "role": "Signer 1",
             "required": True,
             "type": "signature",
-        }
-        # {
-        #     "x": int(data["x_t"]),
-        #     "y": int(data["y_t"]),
-        #     "width": 90,
-        #     "height": 20,
-        #     "page_number": int(data["page_number_t"]),
-        #     "label": "text here",
-        #     "role": "Signer 1",
-        #     "required": True,
-        #     "type": "text",
-        # }
-        ]}
+        }]}
     payload = json.dumps(payload_1)
-    response = requests.request("PUT", url, headers=headers, data=payload)
+    res = requests.request("PUT", url, headers=headers, data=payload)
+    response = json.loads(res.text)
     try:
-        return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'msg':response['errors']['message']}, status=status.HTTP_400_BAD_REQUEST)
     except:
         return Response({'msg':'signature field added on signnow', 'data':response}, status=status.HTTP_201_CREATED)
 
@@ -244,9 +282,13 @@ def home(request):
 
     noteshistory = requests.get('http://127.0.0.1:8000/noteget/')
     notesdata = noteshistory.json()
+    #print(notesdata)
+
+    SignLinkres = requests.get('http://127.0.0.1:8000/SignNowhtml/')
+    SignLink = SignLinkres.json()
+    #print(SignLink['data']['url_no_signup'])
 
     #breakpoint()
-    return render(request, 'home.html', context={'note':notesdata,})
-
+    return render(request, 'home.html', context={'note':notesdata, 'sign_link':SignLink['data']['url_no_signup']})
 
 
