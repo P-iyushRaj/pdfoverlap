@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from .models import Pdf, Note, Phone, Sign, Fax
-from .serializers import PdfSerializer, VoipSerializer, NoteSerializer, SignatureSerializer, FaxSerializer, SignNowSerializer
+from .models import Pdf, Note, Phone, htmlformsign, Fax
+from .serializers import PdfSerializer, VoipSerializer, NoteSerializer, SignatureSerializer, FaxSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 
@@ -79,14 +79,10 @@ class Voip_api(APIView):
     def post(self, request,format=None):
         serializer = VoipSerializer(data = request.data)
         if serializer.is_valid():
-            #account_sid = os.environ['TWILIO_ACCOUNT_SID']
-            #auth_token = os.environ['TWILIO_AUTH_TOKEN']
-            #from_num = os.environ['FROM_TWILIO_NUMBER']
             account_sid = settings.TWILIO_ACCOUNT_SID
             auth_token = settings.TWILIO_AUTH_TOKEN
             from_num = settings.FROM_TWILIO_NUMBER
             client = Client(account_sid, auth_token)
-
             call = client.calls.create(
                                     url='http://demo.twilio.com/docs/voice.xml',
                                     to= str(request.data['number']),
@@ -135,43 +131,7 @@ class Fax_api(APIView):
                 serializer.save()
                 return Response({'msg':'fax sent'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class Sign_api(CreateAPIView):
-    queryset = Sign.objects.values('signature')
-    serializer_class = SignatureSerializer
-
-#signnow
-import requests
-
-class SignNow_api(APIView):
-
-    def post(self, request,format=None):
-        serializer = SignNowSerializer(data = request.data)
-        if serializer.is_valid():                
-            url = "https://api-eval.signnow.com/document"
-            ACCESS_KEY = str(settings.SIGNNOW_ACCESS_KEY)
-            Bearer_api_key = 'Bearer ' + ACCESS_KEY
-            headers = { 'Authorization':  Bearer_api_key ,}
-            payload={}
-            #breakpoint()
-            attachments = [('file', (str(request.data['pdf_file_now']), request.data['pdf_file_now']),)]
-            res = requests.request("POST", url, headers=headers, data=payload, files=attachments)
-            response = json.loads(res.text)
-            # print(res.text) #{"id":"4b0ad8f45a0f421bbb37aca57d748246c1176eb8"}
-            #breakpoint()
-
-            try:
-                return Response({'msg':response['error']['message']}, status=status.HTTP_400_BAD_REQUEST)
-            except:
-                serializer.save(doc_id = str(response['id']))
-                res2 = putfield(data = request.data, serializer=serializer, headers =headers)
-                res3 = invitesigner( data = request.data, serializer=serializer, headers =headers )
-
-                #breakpoint()
-                return Response({'msg':'document uploaded on signnow + fields added + mailed to signer'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+        
 #signnowhtml form
 import requests
 
@@ -191,7 +151,6 @@ class SignNowhtmlform_api(APIView):
         except:
             return Response({'msg':"errors"}, status=status.HTTP_400_BAD_REQUEST)
 
-import requests
 def CreateSigningLink(data, headers):
     url = "https://api-eval.signnow.com/link"
     #breakpoint()
@@ -210,7 +169,7 @@ def docupload(headers):
     
     url = "https://api-eval.signnow.com/document"
     payload={}
-    attachments = [('file', ('check.docx', open("/Users/piyushraj/Desktop/pdfoverlap/form/Untitled document.docx" , 'rb')),)]
+    attachments = [('file', ('check.docx', open("/Users/piyushraj/Desktop/pdfoverlap/demo/sign_white.pdf" , 'rb')),)]
     res = requests.request("POST", url, headers=headers, data=payload, files=attachments)
     response = json.loads(res.text)
     #breakpoint()
@@ -223,10 +182,10 @@ def putfield( data, headers):
     #breakpoint()
     url = "https://api-eval.signnow.com/document/" + str(data['id'])
     payload_1={"fields": [{
-            "x": 20,
-            "y": 40,
-            "width": 120,
-            "height": 70,
+            "x": 40,
+            "y": 50,
+            "width": 240,
+            "height": 140,
             "page_number": 0,
             "label": "sign here",
             "role": "Signer 1",
@@ -268,10 +227,6 @@ def invitesigner( data, serializer, headers ):
     except:
         return Response({'msg':'signature field added on signnow', 'data':response}, status=status.HTTP_201_CREATED)
 
-
-
-
-
 from django.http import HttpResponse
 from django.shortcuts import render
 import requests
@@ -282,12 +237,10 @@ def home(request):
 
     noteshistory = requests.get('http://127.0.0.1:8000/noteget/')
     notesdata = noteshistory.json()
-    #print(notesdata)
 
     #SignLinkres = requests.get('http://127.0.0.1:8000/SignNowhtml/')
     #SignLink = SignLinkres.json()
-    #print(SignLink['data']['url_no_signup'])
-    SignLink = 'https://eval.signnow.com/s/DRSs6jfK'
+    SignLink = 'https://eval.signnow.com/s/FTVEzhBb'
     #breakpoint()
     #return render(request, 'home.html', context={'note':notesdata, 'sign_link':SignLink['data']['url_no_signup']})
     return render(request, 'home.html', context={'note':notesdata, 'sign_link':SignLink})

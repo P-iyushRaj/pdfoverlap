@@ -54,34 +54,6 @@
   </form><hr>
   <div id="result"></div><br><hr>
 
-  <form action = 'http://127.0.0.1:8000/sign/' enctype="multipart/form-data"  id="formsignid" title = "" method = 'POST'>
-  <div class="container">
-    <label class="sign"><b>Signature</b></label><br>
-    <input type="file" accept="image/png, image/jpeg"  id="signature" name="signature" ><br>
-    </div>
-    <div>
-      <input type="submit" id="submitButtonsign" name="submitButton" value="submit">
-    </div>
-  </form>
-
-<div style = "width:350px;height:auto; padding:10px 10px 10px 10px; background-color:black; color:green; ">
-<form method="post" action="http://127.0.0.1:8000/sign/" class="sigPad" id='formpadid'>
-  {% csrf_token %}
-  <p class="drawItDesc">Click and drag to draw your signature in the box below.</p>
-    <div class="sig sigWrapper">
-      <canvas class="pad" width="275" height="200" ID="myCanvas"></canvas>
-      <input type="hidden" name="output" class="output">
-    </div>
-    <div id = "submit">
-      <button type="submit" name="submit">Submit Signature</button>
-    </div>
-    <div id = "clear">
-      <button type="clear" name="clear" class= "clearButton">Clear Signature</button>
-    </div>
-    <div style="clear:both;"></div>
-  </form>
-</div><hr>
-
   <form action = 'http://127.0.0.1:8000/pdffile/' id="formpdfid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(255, 154, 204); color: black;">
     <div class="container">
       <table>
@@ -105,61 +77,6 @@
     <div><input type="submit" id="submitButtonpdf" name="submitButtonpdf" value="Submit"></div>
   </form><br><hr>
 
-<!-- <form action = 'http://127.0.0.1:8000/signnow/' id="formsignnowid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(155, 255, 255); color: black;">
-    <div class="container">
-      <table>
-      <tr>
-        <th>Pdf form</th>
-        <th>X</th>
-        <th>Y</th>
-        <th>page_number</th>
-        <th>reciever_mailid</th>
-      </tr>
-      <tr>
-        <td><input id="pdf_file_now" name="pdf_file_now" type="file" accept="application/pdf" ></td>
-        <td><input type="number" id="x_s" name="x_s" placeholder="signature x-location"></td>
-        <td><input type="number" id="y_s" name="y_s" placeholder="signature y-location"></td>
-        <td><input type="number" id="page_number" name="page_number" placeholder="signature on page num"></td>
-        <td><input type="text" id="reciever_mailid" name="reciever_mailid" placeholder="aaaaaaa@gmail.com"></td>
-      </tr>
-      
-      <tr>
-        <td><input id="pdf_file_now" name="pdf_file_now" type="file" accept="application/pdf" ></td>
-        <td><input type="number" id="x_t" name="x_t" placeholder="text x-location"></td>
-        <td><input type="number" id="y_t" name="y_t" placeholder="text y-location"></td>
-        <td><input type="number" id="page_number_t" name="page_number_t" placeholder="text on page num"></td>
-      </tr>
-      <tr>
-        <td colspan="0"></td>
-        <td><input type="number" id="x_s" name="x_s" placeholder="signature x-location"></td>
-        <td><input type="number" id="y_s" name="y_s" placeholder="signature y-location"></td>
-        <td><input type="number" id="page_number" name="page_number" placeholder="signature on page num"></td>
-        <td><input type="text" id="reciever_mailid" name="reciever_mailid" placeholder="aaaaaaa@gmail.com"></td>
-      </tr> 
-
-      </table>
-    </div> 
-    <div><input type="submit" id="submitButtonsignnow" name="submitButtonsignnow" value="mail for sign"></div>
-  </form><br><hr> -->
-
-
-
-  <form action = 'http://127.0.0.1:8000/signnow/' id="formsignnowid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(155, 255, 255); color: black;">
-    <div class="container">
-      <table>
-      <tr>
-        <th>Pdf form</th>
-        <th>reciever_mailid</th>
-      </tr>
-      <tr>
-        <td><input id="pdf_file_now" name="pdf_file_now" type="file" accept=".docx" ></td>
-        <td><input type="text" id="reciever_mailid" name="reciever_mailid" placeholder="aaaaaaa@gmail.com"></td>
-      </tr>
-
-      </table>
-    </div> 
-    <div><input type="submit" id="submitButtonsignnow" name="submitButtonsignnow" value="mail for sign"></div>
-  </form><br><hr>
 
   <form action = 'http://127.0.0.1:8000/SignNowhtml/' id="formhtmlsignid" title = "" method = 'POST' style = "padding:10px 10px 10px 10px; background-color:rgb(255, 154, 204); color: black;">
     <div class="container">
@@ -170,27 +87,16 @@
     <div class="container">
       <label class="number"><b>Mobile Number</b></label><br>
       <input type="number" id="mobilenum" name="mobilenum" placeholder = "+12341234534" ><br>
-    </div> 
+    </div> <br>
 
-    <div class="container">
-      <label class="pad"><b>click here to sign</b></label><br>
-      <input type="submit" id="signpop" name="signpop" value="Sign Here">
+    <div class="container" style = "width:100px;height:50px; padding:10px 10px 10px 10px; background-color:rgb(128, 191, 241); color: black; ">
+      <label class="note"><b>Sign now link</b></label><br>
+      <a href="#" onclick="pop1()">click here to sign</a><br>
     </div><br>
 
     <div><input type="submit" id="submitButtoncheck" name="submitButtoncheck" value="Submit"></div>
   </form><br><hr>
 
-    <div class="container" style = "width:350px;height:auto; padding:10px 10px 10px 10px; background-color:yellow; color: black; ">
-      <label class="note"><b>Sign now link</b></label><br>
-            <label class="note"><b>{{ sign_link }}</b></label><br>
-            <a href="#" onclick="pop1()">Open first</a><br>
-        </div>
-
-
-  <div style="border: 3px solid rgb(201, 0, 1); overflow: hidden; margin: auto auto; max-width: 400;">
-    <iframe scrolling="no" src="https://eval.signnow.com/s/Td77Y6tL" style="border: 0px none; margin-left: 0px; height: 859px; margin-top: 50px; width: 926px;">
-    </iframe>
-  </div>
 
 </body> 
 
@@ -431,7 +337,7 @@ $(document).ready(function (e) {
 
     console.log(printLink);
 
-      winref = window.open('https://eval.signnow.com/s/DRSs6jfK','popwin','width=640, height=480');
+      winref = window.open('https://eval.signnow.com/s/pMe9KOv3','popwin','width=640, height=480');
   }
 </script>
 
